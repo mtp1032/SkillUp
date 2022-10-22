@@ -1,0 +1,33 @@
+## Interface: 30400
+##----------------------------------------------
+## TOC versions for other expansions
+##----------------------------------------------
+## Shadowlands: 90100
+## TBC Classic: 20501
+## Classic (Vanilla): 11307
+##----------------------------------------------
+## Title: SkillUp
+## Notes: Notify player when a skill up occurs
+## Author: Michael Peterson
+## SavedVariablesPerCharacter:
+## SavedVariables:
+## ##Version: Prototype - V1.0 
+## X-Expansion: Classic WotLK
+## 9 March, 2021
+## Dependencies: WoWThreads
+## OptionalDeps:
+
+##---------------------------------------------
+##-------------- AddOn Code -------------------
+##---------------------------------------------
+Locales\EnUS.lua
+## Sources\Errors.lua
+## Sources\MsgFrames.lua
+SkillUpEventHandler.lua
+PublishFloatingText.lua
+SkillUp.lua
+
+
+
+
+
