@@ -125,6 +125,14 @@ local function insertChatEntry( isSkillUp, msgString )
 		result = E:setResult( L["INVALID_TYPE"] .. " Expected boolean", dbgstack())
 		return false, result
 	end
+	if msgString == nil then
+		result = E:setResult( L["INPUT_PARAM_NIL"], dbgstack())
+		return false, result
+	end
+	if type( msgString) ~= "string" then
+		result = E:setResult( L["INVALID_TYPE"] .. " Expected boolean", dbgstack())
+		return false, result
+	end
 
 
 	-- after insert, entry is the last element in the table
