@@ -75,6 +75,7 @@ local chatEntries = {}
 local publisherThread_h = nil
 
 local SUSPEND = false
+
 function handler:suspend()
 	SUSPEND = true
 end
