@@ -70,6 +70,9 @@ end
 --     end
 -- end
 -- ******************* END SKILLUPS USING BLIZZ CODE ***********************
+SKILLUP.skillup = 1
+SKILLUP.loot	= 2
+SKILLUP.money 	= 3
 
 local chatEntries = {}
 local publisherThread_h = nil
@@ -118,6 +121,11 @@ local function insertChatEntry( isSkillUp, msgString )
 	local result = {SUCCESS, EMPTY_STR, EMPTY_STR}
 	local entry = {isSkillUp, msgString}
 
+	if publisherThread_h == nil then
+		result = E:setResult(L["PUBLISHER_THREAD_NOT_INITIALIZED"], debugstack())
+		mf:postResult( result )
+	end
+
 	if isSkillUp == nil then
 		result = E:setResult( L["INPUT_PARAM_NIL"], dbgstack())
 		return false, result
@@ -135,14 +143,9 @@ local function insertChatEntry( isSkillUp, msgString )
 		return false, result
 	end
 
-
 	-- after insert, entry is the last element in the table
 	table.insert( chatEntries, entry )
 
-	if publisherThread_h == nil then
-		result = E:setResult(L["PUBLISHER_THREAD_NOT_INITIALIZED"], debugstack())
-		mf:postResult( result )
-	end
 
 	result = thread:sendSignal( publisherThread_h, SIG_WAKEUP )
 	return result
@@ -173,7 +176,7 @@ local function OnEvent( self, event, ... )
 
 	-- TODO: Signals moneyThread_h
 	if event == "CHAT_MSG_MONEY" then
-		result = insertChatEntry( true, arg1 )
+		result = insertChatEntry( false, arg1 )
 		if not result[1] then mf:postResult( result ) return end
 		return
 	end

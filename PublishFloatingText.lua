@@ -193,7 +193,7 @@ function publish:floatSkillup()
       end
     end
   end
-  mf:postMsg( sprintf("SkilllUp thread terminated.\n"))
+  mf:postMsg( sprintf("SkillUp thread terminated.\n"))
 end
 
 local fileName = "PublishFloatingText.lua"

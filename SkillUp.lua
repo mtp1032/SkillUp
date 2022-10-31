@@ -33,20 +33,10 @@ local function main()
     -- local areEqual, result = thread:areEqual(thread_h, main_h )
     -- if not result[1] then mf:postResult( result ) end
     local clockInterval = 50
-    publisherThread_h, result = thread:create( 50, 
-                                                function()
-                                                    publish:floatSkillup()
-                                                end)
-    if not result[1] then 
-        mf:postResult( result ) 
-        return 
-    end
-
+    publisherThread_h, result = thread:create( 50, function() publish:floatSkillup() end)
+    if not result[1] then mf:postResult( result ) return end
     result = handler:setPublisherThread( publisherThread_h )
-    if not result[1] then 
-        mf:postResult( result ) 
-        return 
-    end  
+    if not result[1] then mf:postResult( result ) return end  
 
     -- Wait for termination signal (SIG_RETURN)
     local signal = SIG_NONE_PENDING
@@ -54,7 +44,6 @@ local function main()
     while signal ~= SIG_RETURN do
         result = thread:yield()
         if not result[1] then mf:postResult( result ) return end
-
         signal, sender_h = thread:getSignal()
     end
 end
