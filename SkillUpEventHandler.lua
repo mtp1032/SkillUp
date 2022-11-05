@@ -70,10 +70,6 @@ end
 --     end
 -- end
 -- ******************* END SKILLUPS USING BLIZZ CODE ***********************
-SKILLUP.skillup = 1
-SKILLUP.loot	= 2
-SKILLUP.money 	= 3
-
 local chatEntries = {}
 local publisherThread_h = nil
 
