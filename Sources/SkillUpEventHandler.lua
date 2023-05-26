@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------------
 -- SkillUpEventHandler.lua   
 -- AUTHOR: Michael Peterson 
--- ORIGINAL DATE: 9 March, 2021
+-- ORIGINAL DATE: 22 May, 2023
 local _, SkillUp = ...
 SkillUp.SkillUpEventHandler = {}
 handler = SkillUp.SkillUpEventHandler

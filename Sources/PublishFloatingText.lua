@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------------
 -- PublishFloatingText.lua
 -- AUTHOR: Michael Peterson
--- ORIGINAL DATE: 11 December, 2020
+-- ORIGINAL DATE: 22 May, 2023
 local _, SkillUp = ...
 SkillUp.PublishFloatingText = {}
 publish = SkillUp.PublishFloatingText
