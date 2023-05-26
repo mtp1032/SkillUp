@@ -1,4 +1,6 @@
 # SkillUp
+# Version 1.0.0
+# Date: 25 May, 2023
 
 When your character experiences a skill up this addon will display a message as a highlighted line of floating text just above your character. If the action for which a skillup was awarded also resulted in acquiring an item (a herb, ore, leather, etc.,) then a second line of text is displayed showing what was acquired. For example, suppose your character's cooking skill increases to 51. The following text will be displayed above your character:
 
@@ -8,6 +10,6 @@ This notice also appears in the Chat Frame (in fact, the addon simply reproduces
 
 ASIDE:
 
-Skillup employs WoWThreads, an asynchronous non-preemptive multithread library for World of Warcraft addon Development. In truth, this addon could have been implemented much more simply without the threads, but I was looking to write a addon that illustrated a solution to a very simple producer-consumer problem. Here's the control flow: 
+Skillup employs WoWThreads in the form of a library (LiBThreads-1.0), a library of asynchronous non-preemptive threads for World of Warcraft addon Development. In truth, this addon could have been implemented much more simply without the threads, but I was looking to write a addon that illustrated a solution to a very simple producer-consumer problem.
 
 
