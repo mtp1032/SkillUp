@@ -1,0 +1,25 @@
+## Interface: 30401
+##----------------------------------------------
+## Title: SkillUp
+## Version: 1.0.0
+## Notes: Notify player when a skill up occurs
+## Author: Michael Peterson
+## SavedVariablesPerCharacter:
+## SavedVariables:
+## 9 March, 2021
+## Dependencies: WoWThreads
+## OptionalDeps:
+
+##---------------------------------------------
+##-------------- AddOn Code -------------------
+##---------------------------------------------
+Sources\Base.lua
+Locales\EnUS_SkillUp.lua
+Sources\SkillUpEventHandler.lua
+Sources\PublishFloatingText.lua
+Sources\SkillUp.lua
+
+
+
+
+
