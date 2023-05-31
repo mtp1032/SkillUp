@@ -1,9 +1,9 @@
 --------------------------------------------------------------------------------------
--- Core.lua
--- AUTHOR: Michael Peterson
--- ORIGINAL DATE: 9 October, 2019 
+-- FILE NAME:		Core.lua
+-- AUTHOR:          Michael Peterson
+-- ORIGINAL DATE:   25 May, 2023
 local _, WoWThreads = ...
-WoWThreads.Core = {}
+WoWThreads.Core = {} 
 core = WoWThreads.Core
 local L = WoWThreads.L
 local sprintf = _G.string.format 
@@ -11,8 +11,8 @@ local sprintf = _G.string.format
 core.EMPTY_STR 		= ""
 core.SUCCESS 		= true
 core.FAILURE 		= false
-
-core.DEBUGGING_ENABLED           = false
+local C				= core
+core.DEBUGGING_ENABLED           = true
 core.DATA_COLLECTION_ENABLED     = false
 
 local DEBUGGING_ENABLED           = core.DEBUGGING_ENABLED
@@ -68,6 +68,8 @@ end
 core.ADDON_NAME 	= getAddonName()
 core.ADDON_VERSION 	= GetAddOnMetadata( core.ADDON_NAME, "Version")
 
+local errorMsgFrame = nil
+
 function core:prefix( stackTrace )
 	if stackTrace == nil then stackTrace = debugstack(2) end
 	
@@ -108,21 +110,26 @@ end
 function core:setResult( errMsg, stackTrace )
 	local result = { FAILURE, EMPTY_STR, EMPTY_STR }
 
-	local fileLocation = core:prefix( stackTrace )
-	errMsg = sprintf("%s %s\n", fileLocation, errMsg )
-	result[2] = errMsg
+	local msg = sprintf("%s %s:\n", core:prefix( stackTrace ), errMsg )
+	result[2] = msg
 
 	if stackTrace ~= nil then
 		result[3] = stackTrace
 	end
 	return result
 end
+function core:postResult( result )
+	if errorMsgFrame == nil then
+		errorMsgFrame = frames:createErrorMsgFrame("Error Message")
+	end
 
-function core:printMsg( msg )
-	DEFAULT_CHAT_FRAME:AddMessage( msg, 0.0, 1.0, 0.0 )
-end
-function core:displayErrorMsg( msg )
-	UIErrorsFrame:AddMessage( msg, 1.0, 0.0, 0.0, 20 ) 
+	if result[1] ~= FAILURE then 
+		return
+	end
+
+	local resultMsg = sprintf("%s:\n%s\n", result[2], result[3])
+	errorMsgFrame.Text:Insert( resultMsg )
+	errorMsgFrame:Show()
 end
 function core:displayInfoMsg( msg )
 	UIErrorsFrame:AddMessage( msg, 0.0, 1.0, 0.0, 20 ) 
@@ -133,7 +140,7 @@ function core:dataCollectionIsEnabled()
 end
 function core:enableDataCollection()
     DATA_COLLECTION_ENABLED = true
-    DEFAULT_CHAT_FRAME:AddMessage( "Perfomance Data Collection is Now ENABLED", 0.0, 1.0, 1.0 )
+    DEFAULT_CHAT_FRAME:AddMessage( "Performance Data Collection is Now ENABLED", 0.0, 1.0, 1.0 )
 end
 function core:disableDataCollection()
     DATA_COLLECTION_ENABLED = false  
@@ -147,7 +154,6 @@ function core:disableDebugging()
 	DEBUGGING_ENABLED = false
 	DEFAULT_CHAT_FRAME:AddMessage( "Debugging is Now DISABLED", 0.0, 1.0, 1.0 )
 end
--- RETURNS: boolean true if enabled, false otherwise
 function core:debuggingIsEnabled()
 	return DEBUGGING_ENABLED
 end
@@ -159,3 +165,22 @@ local fileName = "Core.lua"
 if core:debuggingIsEnabled() then
 	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
 end
+--[[ 
+local function bottom()
+	local result = {SUCCESS, EMPTY_STR, EMPTY_STR }
+	result = core:setResult( "Failed in some way", debugstack() )
+	return result
+end
+local function middle()
+	local result = bottom()
+	return result
+end
+local function top()
+	local result = middle()
+	return result
+end
+
+local result = {SUCCESS, EMPTY_STR, EMPTY_STR}
+local result = top()
+if not result[1] then core:postResult( result ) end
+ ]]
