@@ -28,7 +28,7 @@ LibUtils\ErrorHandling.lua
 LibUtils\Utils.lua
 LibUtils\Frames.lua
 LibUtils\MsgFrame.lua
-LibUtils\ScrollText.lua##
+LibUtils\ScrollText.lua
 ##
 Sources\SkillUpEventHandler.lua
 Sources\PublishFloatingText.lua
