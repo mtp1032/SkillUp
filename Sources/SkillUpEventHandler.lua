@@ -6,7 +6,7 @@ local _, SkillUp = ...
 SkillUp.SkillUpEventHandler = {}
 handler = SkillUp.SkillUpEventHandler
 
-local Major ="WoWThreads"
+local Major = "WoWThreads-1.0"
 local thread = LibStub:GetLibrary( Major )
 if not thread then 
     return 
