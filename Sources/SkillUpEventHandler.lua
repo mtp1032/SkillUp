@@ -6,11 +6,12 @@ local _, SkillUp = ...
 SkillUp.SkillUpEventHandler = {}
 handler = SkillUp.SkillUpEventHandler
 
-local Major ="LibThreads-1.0"
+local Major ="WoWThreads"
 local thread = LibStub:GetLibrary( Major )
 if not thread then 
     return 
 end
+local L = SkillUp.L
 
 local SIG_ALERT             = thread.SIG_ALERT
 local SIG_JOIN_DATA_READY   = thread.SIG_JOIN_DATA_READY
@@ -19,10 +20,8 @@ local SIG_METRICS           = thread.SIG_METRICS
 local SIG_NONE_PENDING      = thread.SIG_NONE_PENDING
 
 local sprintf 		= _G.string.format
-local errors 		= thread.Errors
-local EMPTY_STR 	= core.EMPTY_STR
-
-local L = SkillUp.L
+local EMPTY_STR 	= skill.EMPTY_STR
+local SUCCESS		= skill.SUCCESS
 
 handler.SKILLUP = 1
 handler.LOOT	= 2
@@ -62,7 +61,7 @@ local function insertChatEntry( skillupType, chatMsg )
 	table.insert( chatEntries, entry )
 
 	if publisher_h == nil then
-		result = dbg:setResult( "Publisher thread was nil", debugstack() )
+		result = skilldbg:setResult( "Publisher thread was nil", debugstack() )
 		return result
 	end
 	result = thread:sendSignal( publisher_h, SIG_ALERT )
@@ -111,6 +110,6 @@ end
 eventFrame:SetScript( "OnEvent", OnEvent )
 
 local fileName = "SkillUpEventHandler.lua"
-if core:debuggingIsEnabled() then
+if skill:debuggingIsEnabled() then
 	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
 end

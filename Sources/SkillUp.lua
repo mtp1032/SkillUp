@@ -7,7 +7,7 @@ local _, SkillUp = ...
 SkillUp.SkillUp = {}
 skillup = SkillUp.SkillUp
 
-local Major ="LibThreads-1.0"
+local Major ="WoWThreads"
 local thread = LibStub:GetLibrary( Major )
 if not thread then 
     return 
@@ -21,9 +21,8 @@ local SIG_NONE_PENDING      = thread.SIG_NONE_PENDING
 local L = SkillUp.L
 local sprintf = _G.string.format
 
-local EMPTY_STR = core.EMPTY_STR
-local SUCCESS	= core.SUCCESS
-local FAILURE	= core.FAILURE
+local EMPTY_STR = skill.EMPTY_STR
+local SUCCESS	= skill.SUCCESS
 
 local main_h = nil
 local publisherThread_h = nil

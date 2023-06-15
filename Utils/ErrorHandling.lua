@@ -5,7 +5,7 @@
 --------------------------------------------------------------------------------------
 local _, SkillUp = ...
 SkillUp.ErrorHandling = {}	  
-dbg = SkillUp.ErrorHandling	-- use for error reporting services
+skilldbg = SkillUp.ErrorHandling	-- use for error reporting services
 
 local L = SkillUp.lua
 local sprintf = _G.string.format
@@ -16,7 +16,7 @@ local EMPTY_STR 		= skill.EMPTY_STR
 ---------------------------------------------------------------------------------------------------
 --                      PUBLIC/EXPORTED FUNCTIONS
 ----------------------------------------------------------------------------------------------------
-function dbg:prefix( stackTrace )
+function skilldbg:prefix( stackTrace )
 	if stackTrace == nil then stackTrace = debugstack(2) end
 	
 	local pieces = {strsplit( ":", stackTrace, 5 )}
@@ -31,7 +31,7 @@ function dbg:prefix( stackTrace )
 	local location = sprintf("[%s:%d] ", names[#names], lineNumber)
 	return location
 end
-function dbg:print( msg )
+function skilldbg:print( msg )
 	local fileAndLine = dbg:prefix( debugstack(2) )
 	-- print(fileAndLine .. " " .. msg)
 	local str = msg
@@ -43,14 +43,14 @@ function dbg:print( msg )
 	DEFAULT_CHAT_FRAME:AddMessage( str, 0.0, 1.0, 1.0 )
 end	
 	-- see https://us.forums.blizzard.com/en/wow/t/scope-issue/1547258/3
-function dbg:printx( ... )
-	local prefix = dbg:prefix( debugstack(2) )
+function skilldbg:printx( ... )
+	local prefix = skilldbg:prefix( debugstack(2) )
 	print( prefix, ... )
 end
-function dbg:setResult( errMsg, stackTrace )
+function skilldbg:setResult( errMsg, stackTrace )
 	local result = { FAILURE, EMPTY_STR, EMPTY_STR }
 
-	local fileLocation = dbg:prefix( stackTrace )
+	local fileLocation = skilldbg:prefix( stackTrace )
 	errMsg = sprintf("%s %s\n", fileLocation, errMsg )
 	result[2] = errMsg
 

@@ -3,10 +3,10 @@
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 16 April, 2023
 --------------------------------------------------------------------------------------
-print("0")
 local _, WoWThreads = ...
 WoWThreads.Frames = {}
-frames = WoWThreads.Frames
+threadframes = WoWThreads.Frames
+
 local sprintf = _G.string.format
 local L = WoWThreads.L
 
@@ -16,7 +16,6 @@ local L = WoWThreads.L
 
 local DEFAULT_FRAME_WIDTH = 600
 local DEFAULT_FRAME_HEIGHT = 400
-print("2")
 
 --------------------------------------------------------------------------
 --                         CREATE THE VARIOUS BUTTONS
@@ -141,7 +140,7 @@ end
 --------------------------------------------------------------------------
 --  Create the frame where the events are logged
 --  Create the frame where error messages are posted
-function frames:createErrorMsgFrame(title)
+function threadframes:createErrorMsgFrame(title)
     local f = createTopFrame( "ErrorMsgFrame",600, 200, 0, 0 )
     f:SetPoint("CENTER", 0, 200)
     f:SetFrameStrata("BACKGROUND")

@@ -9,26 +9,17 @@
 ## SavedVariables:
 ## Version: V1.0.0 
 ## 23 May, 2023
-
-#----------------------------------------------
-#              LibThreads Library
-#----------------------------------------------
-Libs\LibThreads-1.0\LibStub.lua
-Libs\LibThreads-1.0\LibSources\Core.lua
-Libs\LibThreads-1.0\LibSources\EnUs-WoWThreads.lua
-Libs\LibThreads-1.0\LibSources\Dispatcher.lua
-Libs\LibThreads-1.0\LibSources\Manager.lua
-Libs\LibThreads-1.0\LibThreads-1.0.lua
+## Dependencies: WoWThreads
 
 ##---------------------------------------------
 ##              AddOn Code
 ##---------------------------------------------
 Locales\EnUS_SkillUp.lua
-LibUtils\ErrorHandling.lua
-LibUtils\Utils.lua
-LibUtils\Frames.lua
-LibUtils\MsgFrame.lua
-LibUtils\ScrollText.lua
+Utils\ErrorHandling.lua
+Utils\Utils.lua
+Utils\Frames.lua
+Utils\MsgFrame.lua
+##Utils\ScrollText.lua
 ##
 Sources\SkillUpEventHandler.lua
 Sources\PublishFloatingText.lua

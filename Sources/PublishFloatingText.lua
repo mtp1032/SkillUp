@@ -6,7 +6,7 @@ local _, SkillUp = ...
 SkillUp.PublishFloatingText = {}
 publish = SkillUp.PublishFloatingText
 
-local Major ="LibThreads-1.0"
+local Major ="WoWThreads"
 local thread = LibStub:GetLibrary( Major )
 if not thread then 
     return 
@@ -21,10 +21,8 @@ local SIG_NONE_PENDING      = thread.SIG_NONE_PENDING
 L = SkillUp.L
 
 local sprintf     = _G.string.format
-local EMPTY_STR   = core.EMPTY_STR
-local SUCCESS			= core.SUCCESS
-local FAILURE			= core.FAILURE
-local errors      = thread.Errors
+local EMPTY_STR   = skill.EMPTY_STR
+local SUCCESS			= skill.SUCCESS
 
 local SKILLUP = handler.SKILLUP
 local LOOT		= handler.LOOT
@@ -107,7 +105,6 @@ local function getQuadrantXandYPositions( quadIndex )
 		return isRightSidee, QUADRANT_LR_X, QUADRANT_LR_Y
 	end
 end
-
 local function scrollText( skillupType, chatMsg )
 
   local ScrollMax = (UIParent:GetHeight() * UIParent:GetEffectiveScale())/2 -- max scroll height
