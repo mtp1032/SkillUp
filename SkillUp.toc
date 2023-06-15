@@ -4,12 +4,15 @@
 ##----------------------------------------------
 ## Title: SkillUp
 ## Notes: Notify player when a skill up occurs
-## Author: Michael Peterson
 ## SavedVariablesPerCharacter:
 ## SavedVariables:
+## IconTexture: 1408997
 ## Version: V1.0.0 
 ## 23 May, 2023
 ## Dependencies: WoWThreads
+## X-github: https://github.com/mtp1032/SkillUp
+## X-Expansions: Classic, WotLK, Retail
+
 
 ##---------------------------------------------
 ##              AddOn Code
