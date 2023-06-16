@@ -62,7 +62,6 @@ end
 ----------------------------------------------------------
 main_h, result = thread:create( 50, main )
 if not result[1] then mf:postResult(result) return end
-
 SLASH_SKILLUP_COMMANDS1 = "/skillup"
 SLASH_SKILLUP_COMMANDS2 = "/skill"
 
