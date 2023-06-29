@@ -43,7 +43,7 @@ function mf:postMsg( msg )
 end
 function mf:postResult( result )
 	local status = nil
-	if result[1] ~= STATUS_C_FAILURE then 
+	if result[1] ~= false then 
 		return
 	end
 	local topLine = sprintf("[%s] %s: %s\n", "FAILURE", result[2], result[3])
