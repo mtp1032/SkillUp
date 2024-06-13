@@ -2,27 +2,40 @@
 -- SkillUpEventHandler.lua   
 -- AUTHOR: Michael Peterson 
 -- ORIGINAL DATE: 22 May, 2023
-local _, SkillUp = ...
-SkillUp.SkillUpEventHandler = {}
+--------------------------------------------------------------------------------------
+-- Ensure SkillUp namespace exists
+local ADDON_NAME, _ = ...
+
+-- Make the SkillUp table available to other files
+SkillUp = SkillUp or {}
+SkillUp.SkillUpEventHandler = SkillUp.SkillUpEventHandler or {}
 handler = SkillUp.SkillUpEventHandler
 
-local Major = "WoWThreads-1.0"
-local thread = LibStub:GetLibrary( Major )
-if not thread then 
-    return 
-end
+local UtilsLib = LibStub("UtilsLib")
+local utils = UtilsLib
+if not utils then return end
+
+local thread = LibStub:GetLibrary( "WoWThreads-1.0" )
+if not thread then return end
+
 local L = SkillUp.L
 
-local SIG_ALERT             = thread.SIG_ALERT
-local SIG_JOIN_DATA_READY   = thread.SIG_JOIN_DATA_READY
-local SIG_TERMINATE         = thread.SIG_TERMINATE
-local SIG_METRICS           = thread.SIG_METRICS
-local SIG_STOP              = thread.SIG_STOP
-local SIG_NONE_PENDING      = thread.SIG_NONE_PENDING
+local SIG_ALERT         = thread.SIG_ALERT
+local SIG_GET_DATA      = thread.SIG_GET_DATA
+local SIG_RETURN_DATA   = thread.SIG_RETURN_DATA
+local SIG_BEGIN         = thread.SIG_BEGIN
+local SIG_HALT          = thread.SIG_HALT
+local SIG_TERMINATE     = thread.SIG_TERMINATE
+local SIG_IS_COMPLETE   = thread.SIG_IS_COMPLETE
+local SIG_SUCCESS       = thread.SIG_SUCCESS
+local SIG_FAILURE       = thread.SIG_FAILURE  
+local SIG_SEND_DATA         = thread.SIG_SEND_DATA 
+local SIG_WAKEUP        = thread.SIG_WAKEUP 
+local SIG_CALLBACK      = thread.SIG_CALLBACK
+local SIG_THREAD_DEAD   = thread.SIG_THREAD_DEAD
+local SIG_NONE_PENDING  = thread.SIG_NONE_PENDING
 
-local sprintf 		= _G.string.format
-local EMPTY_STR 	= skill.EMPTY_STR
-local SUCCESS		= skill.SUCCESS
+local sprintf 	= _G.string.format
 
 handler.SKILLUP = 1
 handler.LOOT	= 2
@@ -38,36 +51,6 @@ local publisher_h = nil
 function handler:setPublisherThread( thread_h )
 	publisher_h = thread_h
 end
-function handler:getChatEntry()
-	if #chatEntries == 0 then return nil, nil, 0 end
-
-    local entry = table.remove( chatEntries, 1)
-	local isSkillUp = entry[1]
-	local chatMsg	= entry[2]
-
-	return isSkillUp, chatMsg, #chatEntries
-end
-local function insertChatEntry( skillupType, chatMsg )
-	local result = {SUCCESS, EMPTY_STR, EMPTY_STR}
-	assert( chatMsg ~= nil, "ASSERT FAILED: chatMsg was nil.")
-
-	if skillupType ~= SKILLUP and
-		skillupType ~= LOOT and
-		skillupType ~= MONEY then
-		local s = sprintf("ASSERT FAILED: Skillup Type, %d, not recognized", skillupType)
-		assert( false, s )
-	end
-
-	local entry = {skillupType, chatMsg}
-	table.insert( chatEntries, entry )
-
-	if publisher_h == nil then
-		result = skilldbg:setResult( "Publisher thread was nil", debugstack() )
-		return result
-	end
-	result = thread:sendSignal( publisher_h, SIG_ALERT )
-	return result
-end
 
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("ADDON_LOADED")
@@ -76,41 +59,33 @@ eventFrame:RegisterEvent("CHAT_MSG_LOOT")
 eventFrame:RegisterEvent("CHAT_MSG_MONEY")
 
 local function OnEvent( self, event, ... )
-	local arg1 = ...
-	local result = {SUCCESS, EMPTY_STR, EMPTY_STR}
+	local args = ...
 	local skillupType = nil
 
-	if event == "ADDON_LOADED" and arg1 == L["ADDON_NAME"] then
+	if event == "ADDON_LOADED" and args == L["ADDON_NAME"] then
 		DEFAULT_CHAT_FRAME:AddMessage( L["ADDON_LOADED_MESSAGE"], 1.0, 1.0, 0)
+		
 		eventFrame:UnregisterEvent("ADDON_LOADED")  
+		return
 	end
 
-	-- if handler:isSuspended() == true then return end
-	-- TODO: Signals lootThread_h
 	if event == "CHAT_MSG_LOOT" then
-		local chatMsg = arg1
-		result = insertChatEntry( LOOT, chatMsg )
-		if not result[1] then mf:postResult( result ) return end
-		return
-	end
+		local msgEntry = {LOOT, args}
+		-- utils:postMsg( sprintf("Code: %d, Msg:%s\n",msgEntry[1], msgEntry[2]))
+		thread:sendSignal( publisher_h, SIG_SEND_DATA, msgEntry )
 
-	if event == "CHAT_MSG_SKILL" then
-		local chatMsg = arg1
-		result = insertChatEntry( SKILLUP, chatMsg )
-		if not result[1] then mf:postResult( result ) return end
-		return
+	elseif event == "CHAT_MSG_SKILL" then
+		local msgEntry = {SKILLUP, args}
+		thread:sendSignal( publisher_h,  SIG_SEND_DATA, msgEntry)
+
+	elseif event == "CHAT_MSG_MONEY" then
+		local msgEntry = {MONEY, args}
+		thread:sendSignal( publisher_h, SIG_SEND_DATA, msgEntry )
 	end
-	if event == "CHAT_MSG_MONEY" then
-		local chatMsg = arg1
-		result = insertChatEntry( MONEY, chatMsg )
-		if not result[1] then mf:postResult( result ) return end
-		return
-	end
-	return
 end
 eventFrame:SetScript( "OnEvent", OnEvent )
 
 local fileName = "SkillUpEventHandler.lua"
-if skill:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
+if core:debuggingIsEnabled() then
+	DEFAULT_CHAT_FRAME:AddMessage( fileName, 0.0, 1.0, 1.0 )
 end

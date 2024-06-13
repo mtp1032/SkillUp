@@ -2,28 +2,39 @@
 -- PublishFloatingText.lua
 -- AUTHOR: Michael Peterson
 -- ORIGINAL DATE: 22 May, 2023
-local _, SkillUp = ...
-SkillUp.PublishFloatingText = {}
+--------------------------------------------------------------------------------------
+local ADDON_NAME, _ = ...
+
+-- Ensure SkillUp namespace exists
+SkillUp = SkillUp or {}
+SkillUp.PublishFloatingText = SkillUp.PublishFloatingText or {}
 publish = SkillUp.PublishFloatingText
 
-local Major = "WoWThreads-1.0"
-local thread = LibStub:GetLibrary( Major )
-if not thread then 
-    return 
-end
+local UtilsLib = LibStub("UtilsLib")
+local utils = UtilsLib
+if not utils then return end
 
-local SIG_ALERT             = thread.SIG_ALERT
-local SIG_JOIN_DATA_READY   = thread.SIG_JOIN_DATA_READY
-local SIG_TERMINATE         = thread.SIG_TERMINATE
-local SIG_METRICS           = thread.SIG_METRICS
-local SIG_STOP              = thread.SIG_STOP
-local SIG_NONE_PENDING      = thread.SIG_NONE_PENDING
+local thread = LibStub:GetLibrary( "WoWThreads-1.0" )
+if not thread then return end
 
-L = SkillUp.L
+local SIG_ALERT         = thread.SIG_ALERT
+local SIG_GET_DATA      = thread.SIG_GET_DATA
+local SIG_SEND_DATA     = thread.SIG_SEND_DATA
+local SIG_BEGIN         = thread.SIG_BEGIN
+local SIG_HALT          = thread.SIG_HALT
+local SIG_TERMINATE     = thread.SIG_TERMINATE
+local SIG_IS_COMPLETE   = thread.SIG_IS_COMPLETE
+local SIG_SUCCESS       = thread.SIG_SUCCESS
+local SIG_FAILURE       = thread.SIG_FAILURE  
+local SIG_READY         = thread.SIG_READY 
+local SIG_WAKEUP        = thread.SIG_WAKEUP 
+local SIG_CALLBACK      = thread.SIG_CALLBACK
+local SIG_THREAD_DEAD   = thread.SIG_THREAD_DEAD
+local SIG_NONE_PENDING  = thread.SIG_NONE_PENDING
+
+local L = SkillUp.L
 
 local sprintf     = _G.string.format
-local EMPTY_STR   = skill.EMPTY_STR
-local SUCCESS			= skill.SUCCESS
 
 local SKILLUP = handler.SKILLUP
 local LOOT		= handler.LOOT
@@ -193,25 +204,21 @@ function publish:skillUp() -- This is the skillup thread's action routine - set 
 
   while not DONE do 
     thread:yield()
-    local signal, sender_h = thread:getSignal()
+    local sigEntry, errorMsg = thread:getSignal()
 
-    if signal == SIG_ALERT then
-      local skillupType, chatMsg, remainingEntries = handler:getChatEntry()
-      while chatMsg ~= nil do
-        scrollText( skillupType, chatMsg  )
-        thread:delay( 10 )
-        skillupType, chatMsg, remainingEntries = handler:getChatEntry()
-      end
+    if sigEntry[1] == SIG_SEND_DATA then
+      local sigData = sigEntry[3]
+      scrollText( sigData[1], sigData[2] )      
     end
 
     if signal == SIG_TERMINATE then
       DONE = true
     end
   end
-  mf:postMsg( sprintf("publisherThread_h terminated.\n"))
-end
-local fileName = "PublishFloatingText.lua"
-if skill:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded", fileName), 1.0, 1.0, 0.0 )
+utils:postMsg( sprintf("publisher_h terminated.\n"))
 end
 
+local fileName = "PublishFloatingText.lua"
+if core:debuggingIsEnabled() then
+  DEFAULT_CHAT_FRAME:AddMessage( fileName, 0.0, 1.0, 1.0 )
+end

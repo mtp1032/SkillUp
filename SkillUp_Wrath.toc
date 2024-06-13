@@ -1,6 +1,5 @@
 ## Interface: 30401
 ##----------------------------------------------
-# TOC versions for other expansions
 ##----------------------------------------------
 ## Title: SkillUp
 ## Notes: Notify player when a skill up occurs
@@ -17,12 +16,8 @@
 ##              AddOn Code
 ##---------------------------------------------
 Locales\EnUS_SkillUp.lua
-Utils\ErrorHandling.lua
-Utils\Utils.lua
-Utils\Frames.lua
-Utils\MsgFrame.lua
-##Utils\ScrollText.lua
 ##
+Sources\ScrollText.lua
 Sources\SkillUpEventHandler.lua
 Sources\PublishFloatingText.lua
 Sources\SkillUp.lua

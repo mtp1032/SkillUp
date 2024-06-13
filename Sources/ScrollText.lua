@@ -3,14 +3,25 @@
 -- AUTHOR: Michael Peterson 
 -- ORIGINAL DATE: 16 April, 2023
 --------------------------------------------------------------------------------------
-local _, SkillUp = ...
-SkillUp.ScrollText = {}
+-- Ensure SkillUp namespace exists
+local ADDON_NAME, _ = ...
+
+-- Make the SkillUp table available to other files
+SkillUp = SkillUp or {}
+SkillUp.ScrollText = SkillUp.ScrollText or {}
 scroll = SkillUp.ScrollText
 
 local L = SkillUp.L
 local sprintf = _G.string.format
 
-	-- set the color
+local UtilsLib = LibStub("UtilsLib")
+local utils = UtilsLib
+if not utils then return end
+
+local thread = LibStub:GetLibrary( "WoWThreads-1.0" )
+if not thread then return end
+
+-- set the color
 	-- f.Text:SetTextColor( 1.0, 1.0, 1.0 )  -- white
 	-- f.Text:SetTextColor( 0.0, 1.0, 0.0 )  -- green
 	-- f.Text:SetTextColor( 1.0, 1.0, 0.0 )  -- yellow
@@ -231,6 +242,6 @@ end
 initFramePool()
 
 local fileName = "ScrollText.lua"
-if skill:debuggingIsEnabled() then
-	DEFAULT_CHAT_FRAME:AddMessage( sprintf("%s loaded.", fileName ), 1.0, 1.0, 0.0 )
+if core:debuggingIsEnabled() then
+	DEFAULT_CHAT_FRAME:AddMessage( fileName, 0.0, 1.0, 1.0 )
 end

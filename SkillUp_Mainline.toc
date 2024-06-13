@@ -1,6 +1,4 @@
-## Interface: 100100
-##----------------------------------------------
-## TOC versions for other expansions
+## Interface: 100207
 ##----------------------------------------------
 ## Title: SkillUp
 ## Notes: Notify player when a skill up occurs
@@ -13,17 +11,14 @@
 ## X-github: https://github.com/mtp1032/SkillUp
 ## X-Expansions: Classic, WotLK, Retail
 
-
 ##---------------------------------------------
 ##              AddOn Code
 ##---------------------------------------------
+Sources\SkillUp.lua
+Sources\Core.lua
 Locales\EnUS_SkillUp.lua
-Utils\ErrorHandling.lua
-Utils\Utils.lua
-Utils\Frames.lua
-Utils\MsgFrame.lua
-##Utils\ScrollText.lua
 ##
+Sources\ScrollText.lua
 Sources\SkillUpEventHandler.lua
 Sources\PublishFloatingText.lua
-Sources\SkillUp.lua
+Sources\SkillUpMain.lua 
