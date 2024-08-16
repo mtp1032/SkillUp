@@ -1,0 +1,26 @@
+## Interface: 11502, 11503, 20504, 30403, 40400, 100207, 110000, 110002
+##---------------------------------------------------------------------
+## Title: SkillUp
+## Notes: Displays ChatMSG texts to the player
+## Version: 0.0.1
+## X-MAJOR: 0
+## X-MINOR: 0
+## X-PATCH: 1
+## X-Expansions: Classic, Cataclysm, ShadowLands, WarWithin
+## SavedVariablesPerCharacter:
+## SavedVariablesPerCharacter:
+## IconTexture:
+## 16 August, 2024
+## X-github: https://github.com/mtp1032/SkillUp
+
+##---------------------------------------------
+##              AddOn Code
+##---------------------------------------------
+# Load dependencies
+Libs\LibStub.lua
+
+# Localization
+\Locales\EnUS_SkillUp.lua
+
+# main addon files
+SkillupMain.lua
