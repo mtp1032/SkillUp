@@ -20,7 +20,7 @@
 Libs\LibStub.lua
 
 # Localization
-\Locales\EnUS_SkillUp.lua
+Locales\EnUS_SkillUp.lua
 
 # main addon files
 SkillupMain.lua
