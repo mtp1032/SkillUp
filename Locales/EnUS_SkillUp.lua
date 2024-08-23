@@ -17,10 +17,18 @@ if not EnUS_SkillUp then
     return 
 end
 
--- Form a string representing the library's version number (see WoWThreads.lua).
-local MAJOR = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MAJOR")
-local MINOR = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MINOR")
-local PATCH = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-PATCH")
+
+
+-- Configure WoWThreads as a LibStub managed library
+local MAJOR = tonumber(C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MAJOR"))
+local MINOR = tonumber(C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MINOR"))
+local PATCH = tonumber(C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-PATCH"))
+
+if not (MAJOR and MINOR and PATCH) then
+    error("Failed to retrieve version information from the .toc file.")
+end
+-- Combine version components into a single github-style version number
+local versionNumber = MAJOR * 10000 + MINOR * 100 + PATCH
 
 local version = string.format("%s.%s.%s", MAJOR, MINOR, PATCH )
 
@@ -35,8 +43,7 @@ local function getExpansionName( )
                                 [LE_EXPANSION_MISTS_OF_PANDARIA] = "Classic (Mists of Pandaria",
                                 [LE_EXPANSION_LEGION] = "Classic (Legion)",
                                 [LE_EXPANSION_BATTLE_FOR_AZEROTH] = "Classic (Battle for Azeroth)",
-                                [10]   = "The War Within"
-                            }
+                                [LE_EXPANSION_WAR_WITHIN]   = "Retail (The War Within)"                            }
     return expansionNames[expansionLevel]
 end
 
