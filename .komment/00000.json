@@ -1,0 +1,12 @@
+[
+  {
+    "name": "clone_skillup_repo.py",
+    "path": "Testing/clone_skillup_repo.py",
+    "content": {
+      "structured": {
+        "description": "Two primary functions: `clone_repository` which clones a GitHub repository into a temporary directory and `copy_directory` that recursively copies files from one directory to another, ignoring specified subdirectories. The main script clones a specified GitHub repository, loops through a list of target directories, and copies the contents of the cloned repository into each directory while excluding the .git directory.",
+        "items": []
+      }
+    }
+  }
+]
