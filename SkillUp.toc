@@ -1,0 +1,21 @@
+## Interface: 11200
+## -----------------------------------------------------------------------
+## Title: SkillUp
+## Version: 0.0.1
+## Notes: Prints message to when ever a player SkillUp a skill, loot, or money
+## SavedVariablesPerCharacter:
+## 25 August, 2025
+## OptionalDeps:
+## IconTexture:
+## X-github: https://github.com/mtp1032/SkillUp
+## X-Expansions: Classic (Turtle WoW)
+
+#---------------------------------------------
+# Required / Prerequisite files  
+#---------------------------------------------
+Core.lua
+##DebugTools.lua
+ScrollMessage.lua
+EventHandler.lua
+
+
