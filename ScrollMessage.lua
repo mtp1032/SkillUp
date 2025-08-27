@@ -38,6 +38,7 @@ local function getEventKind(event)
 end
 
 local function isValidMsg(msg)
+  if not msg then return false end
   return (type(msg) == "string" and msg ~= "")
 end
 
@@ -119,7 +120,9 @@ local function ensureRunner(name)
   lane.runner, lane.fs = r, fs
 end
 
-local function q_push(name, item) table.insert(lanes[name].queue, item) end
+local function q_push(name, item) 
+  table.insert(lanes[name].queue, item) 
+end
 local function q_pop(name)
   local q = lanes[name].queue
   if table.getn(q) == 0 then return nil end
@@ -248,19 +251,20 @@ end
 
 -- ===== Public API: event + message =====
 function scroll:eventMessage(event, msg)
-  if not isValidMsg(msg) then return end
-  if not UIParent then
-    if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 1) end
-    return
-  end
+    if not isValidMsg(msg) then return end
+    if not UIParent then
+      if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 1) end
+      return
+    end
 
-  local code, key = getEventKind(event)
-  if not code or not key then return end
+    local code, key = getEventKind(event)
+    if not code or not key then return end
 
-  local laneName = laneNameForCode(code)
-  local color = EVENT_COLOR[key] or { r=1, g=1, b=1 }
+    local laneName = laneNameForCode(code)
+    -- local color = EVENT_COLOR[key] or { r=1, g=1, b=1 }
+        local color = EVENT_COLOR[code] or { r=1, g=1, b=1 }
 
-  q_push(laneName, { text=msg, kind=code, color=color })
+    q_push(laneName, { text=msg, kind=code, color=color })
   startNext(laneName)
 end
 
