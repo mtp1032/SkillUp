@@ -8,17 +8,6 @@ SkillUp.EventHandler = SkillUp.EventHandler or {}
 local core   = SkillUp.Core
 local scroll = SkillUp.ScrollMessage
 
-local function emitScroll(eventName, msg)
-  scroll = SkillUp.ScrollMessage or scroll
-  if scroll and scroll.eventMessage then
-    -- debug ping so we know the handler is actually calling the scroller
-    if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage("[EH→SM] "..tostring(eventName).." | "..tostring(msg), 0.6, 0.9, 1.0) end
-    scroll:eventMessage(eventName, msg)
-  else
-    -- scroller missing; visible fallback so we don't lose info
-    if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage(msg or "", 1, 1, 1) end
-  end
-end
 -- ========== Utilities ==========
 local function formatMoney(copper)
     if type(copper) ~= "number" or copper <= 0 then return "0g 0s 0c" end
@@ -31,15 +20,6 @@ local function formatMoney(copper)
     return out .. c .. "c"
 end
 
-local function safeEmit(eventName, msg)
-    if scroll and scroll.eventMessage then
-        scroll:eventMessage(eventName, msg)
-    elseif DEFAULT_CHAT_FRAME then
-        -- Fallback if ScrollMessage isn't ready
-        DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 1)
-    end
-end
-
 -- ========== State (for deltas & de-dupe) ==========
 local lastMoney = nil           -- updated on each PLAYER_MONEY
 local lastLootMsgTime = 0       -- time of last CHAT_MSG_LOOT (for coin de-dupe)
@@ -48,8 +28,8 @@ local DEDUPE_WINDOW = 0.25      -- seconds; suppress $ line if loot just fired
 -- ========== Frame / Events ==========
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
-f:RegisterEvent("PLAYER_MONEY")               -- no arg1
-f:RegisterEvent("CHAT_MSG_LOOT")              -- arg1: localized text
+-- f:RegisterEvent("PLAYER_MONEY")               -- no arg1
+-- f:RegisterEvent("CHAT_MSG_LOOT")              -- arg1: localized text
 f:RegisterEvent("CHAT_MSG_SKILL")             -- arg1: localized text
 f:RegisterEvent("CHAT_MSG_COMBAT_XP_GAIN")    -- arg1: localized text
 
