@@ -1,9 +1,23 @@
 -- EventHandler.lua (SkillUp)
--- UPDATED: 26 Aug 2025
+-- UPDATED: 29 Aug 2025
 -- Lua 5.0 / Classic 1.12-friendly
 
 SkillUp = SkillUp or {}
 SkillUp.EventHandler = SkillUp.EventHandler or {}
+
+-- Robust guard: don't index .loaded on a nil table
+if not (SkillUp.ScrollMessage and SkillUp.ScrollMessage.loaded) then
+    local cf = getglobal and getglobal("DEFAULT_CHAT_FRAME") or DEFAULT_CHAT_FRAME
+    if cf and cf.AddMessage then
+        cf:AddMessage("ERROR: ScrollMessage.lua not loaded.", 1.0, 0.2, 0.2)
+    end
+    return -- Stop execution to prevent further errors
+end
+
+-- Positive dependency check
+if SkillUp._require and not SkillUp._require("ScrollMessage", "EventHandler") then
+    return
+end
 
 local core   = SkillUp.Core
 local scroll = SkillUp.ScrollMessage
@@ -28,10 +42,10 @@ local DEDUPE_WINDOW = 0.25      -- seconds; suppress $ line if loot just fired
 -- ========== Frame / Events ==========
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
--- f:RegisterEvent("PLAYER_MONEY")               -- no arg1
--- f:RegisterEvent("CHAT_MSG_LOOT")              -- arg1: localized text
-f:RegisterEvent("CHAT_MSG_SKILL")             -- arg1: localized text
-f:RegisterEvent("CHAT_MSG_COMBAT_XP_GAIN")    -- arg1: localized text
+f:RegisterEvent("PLAYER_MONEY")               -- money delta
+f:RegisterEvent("CHAT_MSG_LOOT")              -- localized text
+f:RegisterEvent("CHAT_MSG_SKILL")             -- localized text
+f:RegisterEvent("CHAT_MSG_COMBAT_XP_GAIN")    -- localized text
 
 f:SetScript("OnEvent", function()
     local e  = event
@@ -41,11 +55,11 @@ f:SetScript("OnEvent", function()
     if e == "ADDON_LOADED" and a1 == "SkillUp" then
         if GetMoney then lastMoney = GetMoney() end
 
-        -- Optional: nice loaded line (keep or localize as you wish)
         if core and core.getAddonInfo then
             local addonName, addonVersion, addonExpansionName = core:getAddonInfo()
-            local msg = string.format("%s v%s (%s) loaded.", addonName, addonVersion, addonExpansionName)
-            if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage(msg, 0, 1, 0) end
+            local msg = string.format("%s v%s (%s) loaded.", addonName or "SkillUp", addonVersion or "?", addonExpansionName or "")
+            local cf = getglobal and getglobal("DEFAULT_CHAT_FRAME") or DEFAULT_CHAT_FRAME
+            if cf and cf.AddMessage then cf:AddMessage(msg, 0, 1, 0) end
         end
 
         f:UnregisterEvent("ADDON_LOADED")
@@ -53,12 +67,14 @@ f:SetScript("OnEvent", function()
     end
 
     -- Message-style events: pass Blizzard-localized text straight through
-    if e == "CHAT_MSG_COMBAT_XP_GAIN" or
-       e == "CHAT_MSG_SKILL" or
-       e == "CHAT_MSG_LOOT" then
-
+    if e == "CHAT_MSG_COMBAT_XP_GAIN" or e == "CHAT_MSG_SKILL" then
         scroll:eventMessage(e, a1)
+        return
+    end
 
+    if e == "CHAT_MSG_LOOT" then
+        lastLootMsgTime = GetTime and GetTime() or 0
+        scroll:eventMessage(e, a1)
         return
     end
 
@@ -76,7 +92,8 @@ f:SetScript("OnEvent", function()
         if delta == 0 then return end
 
         -- If we just showed a loot line (likely coin loot), suppress duplicate "Money Gained"
-        local recentLoot = (GetTime and (GetTime() - lastLootMsgTime) or 1) <= DEDUPE_WINDOW
+        local nowT = GetTime and GetTime() or 0
+        local recentLoot = (nowT - lastLootMsgTime) <= DEDUPE_WINDOW
         if recentLoot and delta > 0 then
             return
         end
@@ -93,8 +110,5 @@ f:SetScript("OnEvent", function()
     end
 end)
 
--- Optional: file-load ping (respects Core debug style)
-if core and ((core.debuggingIsEnabled and core:debuggingIsEnabled()) or 
-    (core.debug and core.debug == true)) then
-    if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage("EventHandler.lua loaded", 0, 1, 0) end
-end
+SkillUp.EventHandler.loaded = true
+if SkillUp._mark then SkillUp._mark("EventHandler") end

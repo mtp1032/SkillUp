@@ -1,10 +1,26 @@
--- ScrollMessage.lua
+-- ScrollMessage.lua (SkillUp)
+-- UPDATED: 29 Aug 2025
+-- Lua 5.0 / Classic 1.12-friendly
 
 SkillUp = SkillUp or {}
 SkillUp.ScrollMessage = SkillUp.ScrollMessage or {}
 
+-- Robust: don't index .loaded on a nil table
+if not (SkillUp.Core and SkillUp.Core.loaded) then
+    local cf = getglobal and getglobal("DEFAULT_CHAT_FRAME") or DEFAULT_CHAT_FRAME
+    if cf and cf.AddMessage then
+        cf:AddMessage("ERROR: Core.lua not loaded.", 1.0, 0.2, 0.2)
+    end
+    return
+end
+
+-- Positive dependency check
+if SkillUp._require and not SkillUp._require("Core", "ScrollMessage") then
+    return
+end
+
 local scroll = SkillUp.ScrollMessage
-local core  = SkillUp.Core
+local core   = SkillUp.Core
 
 -- Event codes (enums)
 local SKILLUP = 1
@@ -25,7 +41,7 @@ local EVENT_COLOR = {
 
 -- Font settings
 local FONT_PATH  = "Fonts\\FRIZQT__.TTF"
-local FONT_SIZE  = 32          -- <— make this bigger/smaller to taste
+local FONT_SIZE  = 32
 local FONT_FLAGS = "OUTLINE"   -- "", "OUTLINE", "THICKOUTLINE"
 
 -- Return BOTH: numeric code and string key (code, key)
@@ -113,16 +129,14 @@ local function ensureRunner(name)
 
   local fs = r:CreateFontString(nil, "OVERLAY")
   fs:SetFont(FONT_PATH, FONT_SIZE, FONT_FLAGS)
-  
+
   fs:SetJustifyH("CENTER"); fs:SetJustifyV("MIDDLE")
   fs:ClearAllPoints(); fs:SetPoint("CENTER", r, "CENTER", 0, 0); fs:Show()
 
   lane.runner, lane.fs = r, fs
 end
 
-local function q_push(name, item) 
-  table.insert(lanes[name].queue, item) 
-end
+local function q_push(name, item) tinsert(lanes[name].queue, item) end
 local function q_pop(name)
   local q = lanes[name].queue
   if table.getn(q) == 0 then return nil end
@@ -253,7 +267,8 @@ end
 function scroll:eventMessage(event, msg)
     if not isValidMsg(msg) then return end
     if not UIParent then
-      if DEFAULT_CHAT_FRAME then DEFAULT_CHAT_FRAME:AddMessage(msg, 1, 1, 1) end
+      local cf = getglobal and getglobal("DEFAULT_CHAT_FRAME") or DEFAULT_CHAT_FRAME
+      if cf and cf.AddMessage then cf:AddMessage(msg, 1, 1, 1) end
       return
     end
 
@@ -261,17 +276,10 @@ function scroll:eventMessage(event, msg)
     if not code or not key then return end
 
     local laneName = laneNameForCode(code)
-    -- local color = EVENT_COLOR[key] or { r=1, g=1, b=1 }
-        local color = EVENT_COLOR[code] or { r=1, g=1, b=1 }
+    local color = EVENT_COLOR[key] or { r=1, g=1, b=1 }  -- <-- fixed
 
     q_push(laneName, { text=msg, kind=code, color=color })
-  startNext(laneName)
-end
-
--- (optional) debug ping
-if core and core.debuggingIsEnabled and core.debuggingIsEnabled() then
-  local sw, sh = getScreenSize()
-  DEFAULT_CHAT_FRAME:AddMessage("SkillUp: ScrollMessage.lua (lanes) loaded  sw="..sw.." sh="..sh, 0.5, 1.0, 0.5)
+    startNext(laneName)
 end
 
 -- (optional) self-test
@@ -281,3 +289,6 @@ function scroll:_debugTest()
   scroll:eventMessage("CHAT_MSG_LOOT", "[Test] You receive loot: Linen Cloth")
   scroll:eventMessage("PLAYER_MONEY", "Money Gained: 1g 23s 45c")
 end
+
+SkillUp.ScrollMessage.loaded = true
+if SkillUp._mark then SkillUp._mark("ScrollMessage") end
