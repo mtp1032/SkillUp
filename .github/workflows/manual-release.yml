@@ -37,18 +37,21 @@ jobs:
           set -euo pipefail
           rm -rf dist && mkdir -p dist/SkillUp
 
+          # Normalize line endings in case the .toc was committed with CRLF
+          # (sed will rewrite the file without \r)
+          sed -i 's/\r$//' SkillUp.toc
+
           # Always include the .toc
           cp SkillUp.toc dist/SkillUp/
 
-          # Copy files listed in the .toc (non-comment, non-empty lines)
-          # Your .toc lists:
-          #   Core.lua
-          #   Localizations.lua
-          #   ScrollMessage.lua
-          #   EventHandler.lua
-          awk '!/^##/ && !/^#/ && NF {print}' SkillUp.toc | while read -r f; do
-            # Fail if a declared file is missing (helps catch mistakes)
-            if [[ ! -f "$f" ]]; then
+          # Copy files listed in the .toc (skip comments/blank lines)
+          # Trim leading/trailing whitespace and strip any trailing \r just in case
+          awk '!/^[[:space:]]*##/ && !/^[[:space:]]*#/ && NF {print}' SkillUp.toc | while IFS= read -r line; do
+            f="${line%$'\r'}"
+            # trim
+            f="$(printf '%s' "$f" | sed -E 's/^[[:space:]]+|[[:space:]]+$//g')"
+            [ -z "$f" ] && continue
+            if [ ! -f "$f" ]; then
               echo "ERROR: '$f' listed in SkillUp.toc but not found."
               exit 1
             fi
@@ -56,8 +59,8 @@ jobs:
           done
 
           # Optionally include README and LICENSE if present
-          [[ -f README.md ]] && cp README.md dist/SkillUp/ || true
-          [[ -f LICENSE ]]   && cp LICENSE   dist/SkillUp/ || true
+          [ -f README.md ] && cp README.md dist/SkillUp/
+          [ -f LICENSE ] && cp LICENSE dist/SkillUp/
 
           echo "Staged contents:"
           ls -la dist/SkillUp
