@@ -1,47 +1,61 @@
--- Core.lua (SkillUp)
--- UPDATED: 29 Aug 2025
--- Lua 5.0 / Classic 1.12-friendly
-
+-- === SkillUp Core: Addon identity detection (Lua 5.0 / Classic 1.12) ===
 SkillUp = SkillUp or {}
 SkillUp.Core = SkillUp.Core or {}
 local core = SkillUp.Core
 
--- === tiny load-order helpers (Lua 5.0-safe) ===
-SkillUp._load = SkillUp._load or { seen = {}, order = {} }
+local ADDON_NAME = "SkillUp"
 
--- Mark a module as loaded
-function SkillUp._mark(name)
-    local t = SkillUp._load
-    t.seen[name] = true
-    tinsert(t.order, name)  -- Lua 5.0: prefer tinsert
-end
-
--- Require that 'prev' was loaded before 'current'.
--- Returns true if OK; prints a red error and returns false otherwise.
-function SkillUp._require(prev, current)
-    local ok = SkillUp and SkillUp._load and SkillUp._load.seen[prev]
-    if not ok then
-        local cf = getglobal and getglobal("DEFAULT_CHAT_FRAME") or DEFAULT_CHAT_FRAME
-        if cf and cf.AddMessage then
-            cf:AddMessage("ERROR: "..current.." expected "..prev.." to be loaded first.", 1.0, 0.2, 0.2)
+-- Derive AddonName (folder/.toc) from the Lua call stack; library-friendly.
+local function detectAddonNameFromStack()
+    if type(debugstack) ~= "function" then return nil end
+    local s = debugstack()
+    if not s or s == "" then return nil end
+    local lower = string.lower(s)
+    local a, b = string.find(lower, "interface[\\/]addons[\\/]")
+    if not b then return nil end
+    local rest = string.sub(lower, b + 1)
+    local sepPos = string.find(rest, "[\\/]")
+    if not sepPos then return nil end
+    local start_index = b + 1
+    local end_index   = b + sepPos - 1
+    local folder = string.sub(s, start_index, end_index)
+    -- trim leading/trailing spaces (no string.match in 5.0)
+    if folder and folder ~= "" then
+        while string.sub(folder, 1, 1) == " " do folder = string.sub(folder, 2) end
+        while string.sub(folder, string.len(folder), string.len(folder)) == " " do
+            folder = string.sub(folder, 1, string.len(folder)-1)
         end
-        return false
     end
-    return true
+    return folder
 end
 
--- === core metadata & debugging toggles ===
-local addonName = "SkillUp"
-local DEBUGGING_ENABLED = true
-local addonExpansionName = "Classic (Turtle WoW)"
-local addonVersion = GetAddOnMetadata and GetAddOnMetadata("SkillUp", "Version") or "?"
+local function initIdsOnce()
+    if SkillUp.AddonName then return end
+    local folder = detectAddonNameFromStack() or ADDON_NAME
+    SkillUp.AddonName = folder or ADDON_NAME
 
+    local title, ver, exp = folder, "", ""
+    if type(GetAddOnMetadata) == "function" then
+        local t = GetAddOnMetadata(folder, "Title");       if t and t ~= "" then title = t end
+        local v = GetAddOnMetadata(folder, "Version");     if v and v ~= "" then ver   = v end
+        local x = GetAddOnMetadata(folder, "X-Expansion"); if x and x ~= "" then exp   = x end
+    end
+    SkillUp.AddonTitle     = title
+    SkillUp.AddonVersion   = ver
+    SkillUp.AddonExpansion = exp
+end
+
+initIdsOnce()
+
+-- Public API: always returns (AddonName, AddonTitle, Version, Expansion)
 function core:getAddonInfo()
-    return addonName, addonVersion, addonExpansionName
+    initIdsOnce()
+    return SkillUp.AddonName,
+           SkillUp.AddonTitle or (SkillUp.AddonName or "SkillUp"),
+           SkillUp.AddonVersion or "",
+           SkillUp.AddonExpansion or ""
 end
-function core:enableDebugging()  DEBUGGING_ENABLED = true  end
-function core:disableDebugging() DEBUGGING_ENABLED = false end
-function core:debuggingIsEnabled() return DEBUGGING_ENABLED end
 
-SkillUp.Core.loaded = false
+SkillUp.Core.loaded = true
 if SkillUp._mark then SkillUp._mark("Core") end
+
