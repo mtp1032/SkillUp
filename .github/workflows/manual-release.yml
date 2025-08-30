@@ -1,0 +1,94 @@
+name: Manual Release (SkillUp)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write  # needed to push a tag and create a release
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # we need full history to push a tag
+
+      - name: Extract version from SkillUp.toc
+        id: version
+        shell: bash
+        run: |
+          # Find a line like "## Version: 0.0.1" and extract "0.0.1"
+          VER=$(grep -E '^##[[:space:]]*Version:' SkillUp.toc | sed -E 's/^##[[:space:]]*Version:[[:space:]]*//; s/[[:space:]]*$//')
+          if [[ -z "$VER" ]]; then
+            echo "Version not found in SkillUp.toc (## Version: x.y.z)."
+            exit 1
+          fi
+          echo "ver=$VER" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VER" >> "$GITHUB_OUTPUT"
+          echo "zip=skillup-v${VER}-master.zip" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VER"
+
+      - name: Stage addon files
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf dist && mkdir -p dist/SkillUp
+
+          # Always include the .toc
+          cp SkillUp.toc dist/SkillUp/
+
+          # Copy files listed in the .toc (non-comment, non-empty lines)
+          # Your .toc lists:
+          #   Core.lua
+          #   Localizations.lua
+          #   ScrollMessage.lua
+          #   EventHandler.lua
+          awk '!/^##/ && !/^#/ && NF {print}' SkillUp.toc | while read -r f; do
+            # Fail if a declared file is missing (helps catch mistakes)
+            if [[ ! -f "$f" ]]; then
+              echo "ERROR: '$f' listed in SkillUp.toc but not found."
+              exit 1
+            fi
+            cp "$f" dist/SkillUp/
+          done
+
+          # Optionally include README and LICENSE if present
+          [[ -f README.md ]] && cp README.md dist/SkillUp/ || true
+          [[ -f LICENSE ]]   && cp LICENSE   dist/SkillUp/ || true
+
+          echo "Staged contents:"
+          ls -la dist/SkillUp
+
+      - name: Create zip
+        shell: bash
+        run: |
+          cd dist
+          zip -r "${{ steps.version.outputs.zip }}" SkillUp
+          mv "${{ steps.version.outputs.zip }}" ..
+          cd ..
+          echo "Created ${{ steps.version.outputs.zip }}"
+
+      - name: Create tag
+        shell: bash
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # If the tag already exists, exit explicitly to avoid a failing push
+          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.version.outputs.tag }} already exists. Aborting."
+            exit 1
+          fi
+          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
+          git push origin "${{ steps.version.outputs.tag }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name:  ${{ steps.version.outputs.tag }}
+          name:      SkillUp ${{ steps.version.outputs.tag }}
+          draft:     false
+          prerelease: false
+          files:     ${{ steps.version.outputs.zip }}
