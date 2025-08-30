@@ -3,6 +3,7 @@
 ## Title: SkillUp
 ## Version: 0.0.1
 ## Notes: Prints message to when ever a player SkillUp a skill, loot, or money
+## X-Expansion: Turtel WoW
 ## SavedVariablesPerCharacter:
 ## 25 August, 2025
 ## OptionalDeps:
@@ -14,7 +15,6 @@
 # Required / Prerequisite files  
 #---------------------------------------------
 Core.lua
+Localizations.lua
 ScrollMessage.lua
 EventHandler.lua
-
-
