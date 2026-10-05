@@ -1,61 +1,139 @@
--- === SkillUp Core: Addon identity detection (Lua 5.0 / Classic 1.12) ===
-SkillUp = SkillUp or {}
-SkillUp.Core = SkillUp.Core or {}
-local core = SkillUp.Core
+-----------------------------------------------------------------
+-- File: Core.lua-
+-----------------------------------------------------------------
 
-local ADDON_NAME = "SkillUp"
+local ADDON_NAME, ns = ...
 
--- Derive AddonName (folder/.toc) from the Lua call stack; library-friendly.
-local function detectAddonNameFromStack()
-    if type(debugstack) ~= "function" then return nil end
-    local s = debugstack()
-    if not s or s == "" then return nil end
-    local lower = string.lower(s)
-    local a, b = string.find(lower, "interface[\\/]addons[\\/]")
-    if not b then return nil end
-    local rest = string.sub(lower, b + 1)
-    local sepPos = string.find(rest, "[\\/]")
-    if not sepPos then return nil end
-    local start_index = b + 1
-    local end_index   = b + sepPos - 1
-    local folder = string.sub(s, start_index, end_index)
-    -- trim leading/trailing spaces (no string.match in 5.0)
-    if folder and folder ~= "" then
-        while string.sub(folder, 1, 1) == " " do folder = string.sub(folder, 2) end
-        while string.sub(folder, string.len(folder), string.len(folder)) == " " do
-            folder = string.sub(folder, 1, string.len(folder)-1)
+ns.Core = ns.Core or {} 
+local core = ns.Core
+
+local EXPANSION_NAMES = {
+    [LE_EXPANSION_CLASSIC] = "Classic",
+    [LE_EXPANSION_BURNING_CRUSADE] = "Burning Crusade",
+    [LE_EXPANSION_WRATH_OF_THE_LICH_KING] = "Wrath of the Lich King",
+    [LE_EXPANSION_CATACLYSM] = "Cataclysm",
+    [LE_EXPANSION_MISTS_OF_PANDARIA] = "Mists of Pandaria",
+    [LE_EXPANSION_WARLORDS_OF_DRAENOR] = "Warlords of Draenor",
+    [LE_EXPANSION_LEGION] = "Legion",
+    [LE_EXPANSION_BATTLE_FOR_AZEROTH] = "Battle for Azeroth",
+    [LE_EXPANSION_SHADOWLANDS] = "Shadowlands",
+    [LE_EXPANSION_DRAGONFLIGHT] = "Dragonflight",
+    [LE_EXPANSION_WAR_WITHIN] = "The War Within",
+    [LE_EXPANSION_MIDNIGHT] = "Midnight",
+}
+
+-----------------------------------------------------------------
+-- Private functions
+-----------------------------------------------------------------
+
+local function getExpansionName()
+    local expansionName = "World of Warcraft: Forever"
+    
+    local expansionLevel = GetExpansionLevel()
+    if expansionLevel == 0 then
+        return expansionName
+    end
+
+    return EXPANSION_NAMES[expansionLevel]
+        or select(4, GetBuildInfo())
+end
+
+local function getLinePrefix(stackTrace)
+    stackTrace = stackTrace or debugstack(3)
+
+    local sourceFile, lineNumber =
+        stackTrace:match("[\\/]([^\\/:]+):(%d+)")
+
+    if not sourceFile or not lineNumber then
+        return "[Unknown:0] "
+    end
+
+    return string.format(
+        "[%s:%s] ",
+        sourceFile,
+        lineNumber
+    )
+end
+
+local function formatMessage(...)
+    local values = {}
+    local valueCount = select("#", ...)
+
+    for index = 1, valueCount do
+        local value = select(index, ...)
+
+        if value == nil then
+            value = "<nil>"
+        elseif type(value) ~= "string" then
+            value = tostring(value)
         end
+
+        values[#values + 1] = value
     end
-    return folder
+
+    return table.concat(values, " ")
 end
 
-local function initIdsOnce()
-    if SkillUp.AddonName then return end
-    local folder = detectAddonNameFromStack() or ADDON_NAME
-    SkillUp.AddonName = folder or ADDON_NAME
-
-    local title, ver, exp = folder, "", ""
-    if type(GetAddOnMetadata) == "function" then
-        local t = GetAddOnMetadata(folder, "Title");       if t and t ~= "" then title = t end
-        local v = GetAddOnMetadata(folder, "Version");     if v and v ~= "" then ver   = v end
-        local x = GetAddOnMetadata(folder, "X-Expansion"); if x and x ~= "" then exp   = x end
-    end
-    SkillUp.AddonTitle     = title
-    SkillUp.AddonVersion   = ver
-    SkillUp.AddonExpansion = exp
+local function _getAddonInfo()
+    local majorVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MAJOR") or "0"
+    local minorVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MINOR") or "0"
+    local patchVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-PATCH") or "0"
+    local addonVersion = string.format( "%s.%s.%s", majorVersion, minorVersion, patchVersion )
+    local expansionName = getExpansionName()
+    return ADDON_NAME, addonVersion, expansionName
 end
 
-initIdsOnce()
+    -- print("[Core.lua]", _getAddonInfo() )
 
--- Public API: always returns (AddonName, AddonTitle, Version, Expansion)
+-----------------------------------------------------------------
+-- Public functions
+-----------------------------------------------------------------
 function core:getAddonInfo()
-    initIdsOnce()
-    return SkillUp.AddonName,
-           SkillUp.AddonTitle or (SkillUp.AddonName or "SkillUp"),
-           SkillUp.AddonVersion or "",
-           SkillUp.AddonExpansion or ""
+    local majorVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MAJOR") or "0"
+    local minorVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-MINOR") or "0"
+    local patchVersion = C_AddOns.GetAddOnMetadata(ADDON_NAME, "X-PATCH") or "0"
+    
+    local addonVersion = string.format( "%s.%s.%s", majorVersion, minorVersion, patchVersion )
+    local expansionName = getExpansionName()
+    return ADDON_NAME, addonVersion, expansionName
 end
 
-SkillUp.Core.loaded = true
-if SkillUp._mark then SkillUp._mark("Core") end
+function core:errorPrint(...)
+    if not core:isDebuggingEnabled() then
+        return
+    end
 
+    local message =
+        getLinePrefix(debugstack(2))
+        .. formatMessage(...)
+
+    messages[#messages + 1] = message
+
+    if messageHandler then
+        messageHandler(message)
+    end
+end
+
+function core:linePrefix()
+    return getLinePrefix(debugstack(2))
+end
+
+local debuggingEnabled = true
+function core:debuggingIsEnabled()
+    return debuggingEnabled
+end
+
+function core:enableDebugging()
+    debuggingEnabled = true
+    print("Debug mode enabled")
+end
+
+function core:disableDebugging()
+    debuggingEnabled = false
+    print("Debug mode disabled")
+end
+
+ns.Core.loaded = true
+if core:debuggingIsEnabled() then
+    print("[SkillUp] Core.lua loaded")
+end

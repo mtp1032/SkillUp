@@ -1,20 +1,19 @@
-## Interface: 11200
-## -----------------------------------------------------------------------
+## Interface: 16001
+##----------------------------------------------------------------------
 ## Title: SkillUp
-## Version: 0.0.1
-## Notes: Prints message to when ever a player SkillUp a skill, loot, or money
-## X-Expansion: Turtel WoW
-## SavedVariablesPerCharacter:
-## 25 August, 2025
-## OptionalDeps:
+## Notes: Displays ChatMSG texts to the player
+## X-MAJOR: 1
+## X-MINOR: 0
+## X-PATCH: 0
+## X-Expansions: Classic, Cataclysm, ShadowLands, WarWithin
 ## IconTexture:
+## 16 August, 2024
 ## X-github: https://github.com/mtp1032/SkillUp
-## X-Expansions: Classic (Turtle WoW)
 
-#---------------------------------------------
-# Required / Prerequisite files  
-#---------------------------------------------
+##---------------------------------------------
+##              AddOn Code
+##---------------------------------------------
+
 Core.lua
-Localizations.lua
-ScrollMessage.lua
-EventHandler.lua
+EnUS.lua
+SkillUp.lua
