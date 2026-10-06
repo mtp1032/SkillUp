@@ -5,9 +5,12 @@
 --------------------------------------------------------------------------------------
 local ADDON_NAME, ns = ...
 
-ns.EnUS = {}
+if not ns.Core.loaded then 
+    error("[SkillUp] Core.lua not loaded")
+    return
+end
+ns.EnUS = ns.EnUS or {}
 local core = ns.Core
-
 local addonName, addonVersion, expansionName = core:getAddonInfo()
 
 local L = setmetatable({}, {
@@ -54,6 +57,6 @@ if LOCALE == "svSE" then
 end
 
 ns.EnUS.loaded = true
-if core:debuggingIsEnabled() then
+if core:isDebuggingEnabled() then
     print( "[SkillUp] EnUS.lua loaded")
 end

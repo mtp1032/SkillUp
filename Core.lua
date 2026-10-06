@@ -48,12 +48,8 @@ local function getLinePrefix(stackTrace)
     if not sourceFile or not lineNumber then
         return "[Unknown:0] "
     end
-
-    return string.format(
-        "[%s:%s] ",
-        sourceFile,
-        lineNumber
-    )
+    local prefix = string.format("[%s:%s] ", sourceFile, lineNumber)
+    return prefix
 end
 
 local function formatMessage(...)
@@ -71,7 +67,6 @@ local function formatMessage(...)
 
         values[#values + 1] = value
     end
-
     return table.concat(values, " ")
 end
 
@@ -83,8 +78,6 @@ local function _getAddonInfo()
     local expansionName = getExpansionName()
     return ADDON_NAME, addonVersion, expansionName
 end
-
-    -- print("[Core.lua]", _getAddonInfo() )
 
 -----------------------------------------------------------------
 -- Public functions
@@ -103,16 +96,8 @@ function core:errorPrint(...)
     if not core:isDebuggingEnabled() then
         return
     end
-
-    local message =
-        getLinePrefix(debugstack(2))
-        .. formatMessage(...)
-
-    messages[#messages + 1] = message
-
-    if messageHandler then
-        messageHandler(message)
-    end
+    local message = getLinePrefix(debugstack(2)) .. formatMessage(...)
+    return message
 end
 
 function core:linePrefix()
@@ -120,21 +105,20 @@ function core:linePrefix()
 end
 
 local debuggingEnabled = true
-function core:debuggingIsEnabled()
+function core:isDebuggingEnabled()
     return debuggingEnabled
 end
 
 function core:enableDebugging()
     debuggingEnabled = true
-    print("Debug mode enabled")
+
 end
 
 function core:disableDebugging()
     debuggingEnabled = false
-    print("Debug mode disabled")
 end
 
 ns.Core.loaded = true
-if core:debuggingIsEnabled() then
+if core:isDebuggingEnabled() then
     print("[SkillUp] Core.lua loaded")
 end

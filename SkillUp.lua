@@ -9,7 +9,9 @@ if not ns.EnUS.loaded then
     error("[SkillUp] EnUS.lua not loaded")
     return
 end
+ns.SkillUp = ns.SkillUp or {}
 
+local skillUp = ns.SkillUp
 local core = ns.Core
 local L    = ns.EnUS.L
 
@@ -115,9 +117,9 @@ end)
 local function displayMsg(msgType, msg)
     local f = acquireFrame()
     f.Text:SetText(msg)
+    core:errorPrint(msg)
 
     local startX, dx, startY, dy = getStartingPositions(msgType)
-
     -- Dynamic stacking: each new message is placed lower
     local dynamicY = startY - (#activeFrames * STACK_SPACING)
 
@@ -151,16 +153,19 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     end
 
     if event == "CHAT_MSG_LOOT" then
+        -- core:errorPrint(msg) -- Debug print for CHAT_MSG_LOOT
         displayMsg(LOOT, msg)
 
     elseif event == "CHAT_MSG_SKILL" then
+        -- core:errorPrint(msg) -- Debug print for CHAT_MSG_SKILL
         displayMsg(SKILL, msg)
 
     elseif event == "CHAT_MSG_MONEY" then
+        -- core:errorPrint(msg) -- Debug print for CHAT_MSG_MONEY
         displayMsg(MONEY, msg)
     end
 end)
 
-if core:debuggingIsEnabled() then
+if core:isDebuggingEnabled() then
     print("[SkillUp] SkillUpMain.lua loaded.")
 end
