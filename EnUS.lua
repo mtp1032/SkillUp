@@ -1,9 +1,8 @@
 --------------------------------------------------------------------------------------
--- EnUS_SkillUp.lua   
+-- FILE: EnUS.lua   
 -- AUTHOR: Michael Peterson -
 -- ORIGINAL DATE: 16 August, 2024
 --------------------------------------------------------------------------------------
--- Ensure SkillUp namespace exists
 local ADDON_NAME, ns = ...
 
 ns.EnUS = {}
