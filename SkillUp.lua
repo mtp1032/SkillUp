@@ -1,9 +1,8 @@
 --------------------------------------------------------------------------------------
--- SkillUpMain.lua
+-- FILE: SkillUp.lua
 -- AUTHOR: Michael Peterson
 -- REWRITE: October 2026
 --------------------------------------------------------------------------------------
-
 local ADDON_NAME, ns = ...
 
 if not ns.EnUS.loaded then
