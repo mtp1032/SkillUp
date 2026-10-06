@@ -1,3 +1,3 @@
 ### SkillUp
 #### Description
-SkillUp is a simple AddOn that scrolls the message delivered with the CHAT_MSG_CHANNEL event.
+SkillUp is a simple AddOn that scrolls messages delivered by the CHAT_MSG_SKILL, CHAT_MSG_LOOT, and CHAT_MSG_MONEY eventS.
