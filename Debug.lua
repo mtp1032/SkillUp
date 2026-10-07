@@ -88,7 +88,7 @@ end
 ns.Debug.loaded = true
 if dbg:isDebuggingEnabled() then
     print("[SkillUp] Debug.lua loaded")
-end
+end 
 
 ----------------------------- TESTS -----------------------------
 -- local function foo()

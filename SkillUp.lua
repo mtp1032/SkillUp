@@ -129,7 +129,7 @@ local function displayMsg(msgType, msg)
     f:ClearAllPoints()
     f:SetPoint("CENTER", startX, dynamicY)
 
-    table.insert(activeFrames, f)
+    table.insert(activeFrames, f) 
 end
 
 ------------------------------------------------------------

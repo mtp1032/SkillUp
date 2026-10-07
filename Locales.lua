@@ -84,4 +84,4 @@ end
 if LOCALE == "svSE" then
 end
 
-ns.Locales.loaded = true
+ns.Locales.loaded = true 
