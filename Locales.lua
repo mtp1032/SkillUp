@@ -7,25 +7,20 @@ local ADDON_NAME, ns = ...
 ns.Locales = ns.Locales or {}
 ns.Locales.debuggingIsEnabled = true
 
-local EXPANSION_NAMES = {}
-local function addExpansionName(expansionLevel, name)
-    if expansionLevel ~= nil then
-        EXPANSION_NAMES[expansionLevel] = name
-    end
-end
-
-addExpansionName(LE_EXPANSION_CLASSIC, "Classic")
-addExpansionName(LE_EXPANSION_BURNING_CRUSADE, "Burning Crusade")
-addExpansionName(LE_EXPANSION_WRATH_OF_THE_LICH_KING, "Wrath of the Lich King")
-addExpansionName(LE_EXPANSION_CATACLYSM, "Cataclysm")
-addExpansionName(LE_EXPANSION_MISTS_OF_PANDARIA, "Mists of Pandaria")
-addExpansionName(LE_EXPANSION_WARLORDS_OF_DRAENOR, "Warlords of Draenor")
-addExpansionName(LE_EXPANSION_LEGION, "Legion")
-addExpansionName(LE_EXPANSION_BATTLE_FOR_AZEROTH, "Battle for Azeroth")
-addExpansionName(LE_EXPANSION_SHADOWLANDS, "Shadowlands")
-addExpansionName(LE_EXPANSION_DRAGONFLIGHT, "Dragonflight")
-addExpansionName(LE_EXPANSION_WAR_WITHIN, "The War Within")
-addExpansionName(LE_EXPANSION_MIDNIGHT, "Midnight")
+local EXPANSION_NAMES = {
+    [LE_EXPANSION_CLASSIC] = "Classic",
+    [LE_EXPANSION_BURNING_CRUSADE] = "Burning Crusade",
+    [LE_EXPANSION_WRATH_OF_THE_LICH_KING] = "Wrath of the Lich King",
+    [LE_EXPANSION_CATACLYSM] = "Cataclysm",
+    [LE_EXPANSION_MISTS_OF_PANDARIA] = "Mists of Pandaria",
+    [LE_EXPANSION_WARLORDS_OF_DRAENOR] = "Warlords of Draenor",
+    [LE_EXPANSION_LEGION] = "Legion",
+    [LE_EXPANSION_BATTLE_FOR_AZEROTH] = "Battle for Azeroth",
+    [LE_EXPANSION_SHADOWLANDS] = "Shadowlands",
+    [LE_EXPANSION_DRAGONFLIGHT] = "Dragonflight",
+    [LE_EXPANSION_WAR_WITHIN] = "The War Within",
+    [LE_EXPANSION_MIDNIGHT] = "Midnight",
+}
    
 -----------------------------------------------------------------
 -- Private functions
@@ -62,7 +57,7 @@ if LOCALE == "enUS" then
     L["EXPANSION_NAME"]   = expansionName
 
     L["ADDON_LOADED_MSG"] = string.format(
-        "%s v%s, %s (Beta).",
+        "%s v%s, %s.",
         ADDON_NAME,
         L["VERSION"],
         L["EXPANSION_NAME"]

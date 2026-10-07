@@ -19,14 +19,16 @@ local L         = ns.Locales.L
 local SKILL = 1
 local LOOT  = 2
 local MONEY = 3
+local COMBAT_XP = 4
 
 ------------------------------------------------------------
 -- Starting Positions (per message type)
 ------------------------------------------------------------
 local START_POSITIONS = {
-    [SKILL] = { x = 100,  y = 25,  dx = 4,  dy = 4 },
-    [LOOT]  = { x = 100,  y = -25, dx = 4,  dy = 4 },
-    [MONEY] = { x = -100, y = 25,  dx = -4, dy = 4 },
+    [SKILL]     = { x = 100,  y = 25,  dx = 4,  dy = 4 },
+    [LOOT]      = { x = 100,  y = -25, dx = 4,  dy = 4 },
+    [MONEY]     = { x = -100, y = 25,  dx = -4, dy = 4 },
+    [COMBAT_XP] = { x = -100, y = -100, dx = -4, dy = -4 },
 }
 
 local function getStartingPositions(msgType)
@@ -161,7 +163,12 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     elseif event == "CHAT_MSG_MONEY" then
         dbg:print(msg) -- Debug print for CHAT_MSG_MONEY
         displayMsg(MONEY, msg)
+        
+    elseif event == CHAT_MSG_COMBAT_XP_GAIN then
+        dbg:print(msg) -- Debug print for CHAT_MSG_COMBAT_XP_GAIN
+        displayMsg(COMBAT_XP, msg)
     end
+
 end)
 
 if dbg:isDebuggingEnabled() then
