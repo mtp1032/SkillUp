@@ -5,16 +5,14 @@
 --------------------------------------------------------------------------------------
 local ADDON_NAME, ns = ...
 
-if not ns.EnUS.loaded then
-    error("[SkillUp] EnUS.lua not loaded")
+if not ns.Debug.loaded then
+    error("[SkillUp] Debug.lua not loaded")
     return
 end
 ns.SkillUp = ns.SkillUp or {}
-
-local skillUp = ns.SkillUp
-local core = ns.Core
-local L    = ns.EnUS.L
-
+local skillUp   = ns.SkillUp
+local dbg       = ns.Debug
+local L         = ns.Locales.L
 ------------------------------------------------------------
 -- Message Types
 ------------------------------------------------------------
@@ -117,7 +115,7 @@ end)
 local function displayMsg(msgType, msg)
     local f = acquireFrame()
     f.Text:SetText(msg)
-    core:errorPrint(msg)
+    dbg:print(msg)
 
     local startX, dx, startY, dy = getStartingPositions(msgType)
     -- Dynamic stacking: each new message is placed lower
@@ -147,25 +145,25 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     local msg = ...
 
     if event == "ADDON_LOADED" and msg == ADDON_NAME then
-        print(L["ADDON_LOADED_MSG"])
+        print(L["ADDON_LOADED_MSG"]) 
         eventFrame:UnregisterEvent("ADDON_LOADED")
         return
     end
 
     if event == "CHAT_MSG_LOOT" then
-        -- core:errorPrint(msg) -- Debug print for CHAT_MSG_LOOT
+        dbg:print(msg) -- Debug print for CHAT_MSG_LOOT
         displayMsg(LOOT, msg)
 
     elseif event == "CHAT_MSG_SKILL" then
-        -- core:errorPrint(msg) -- Debug print for CHAT_MSG_SKILL
+        dbg:print(msg) -- Debug print for CHAT_MSG_SKILL
         displayMsg(SKILL, msg)
 
     elseif event == "CHAT_MSG_MONEY" then
-        -- core:errorPrint(msg) -- Debug print for CHAT_MSG_MONEY
+        dbg:print(msg) -- Debug print for CHAT_MSG_MONEY
         displayMsg(MONEY, msg)
     end
 end)
 
-if core:isDebuggingEnabled() then
+if dbg:isDebuggingEnabled() then
     print("[SkillUp] SkillUpMain.lua loaded.")
 end

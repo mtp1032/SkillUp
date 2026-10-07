@@ -5,7 +5,7 @@
 ## X-MAJOR: 1
 ## X-MINOR: 0
 ## X-PATCH: 0
-## X-Expansions: Wrath of the Lich King, Midnight, Forever
+## X-Expansions: TBC Anniversary, Midnight, WoWForever (Beta_
 ## IconTexture: 135874
 ## 16 August, 2024
 ## X-github: https://github.com/mtp1032/SkillUp
@@ -14,6 +14,6 @@
 ##              AddOn Code
 ##---------------------------------------------
 
-Core.lua
-EnUS.lua
+Locales.lua
+Debug.lua
 SkillUp.lua
