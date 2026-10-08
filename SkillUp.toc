@@ -17,3 +17,8 @@
 Locales.lua 
 Debug.lua
 SkillUp.lua
+
+##---------------------------------------------
+##              Testing Code
+##---------------------------------------------
+Testing/Testing.lua
