@@ -154,19 +154,19 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     end
 
     if event == "CHAT_MSG_LOOT" then
-        dbg:print(msg) -- Debug print for CHAT_MSG_LOOT
+        dbg:print(msg)
         displayMsg(LOOT, msg)
 
     elseif event == "CHAT_MSG_SKILL" then
-        dbg:print(msg) -- Debug print for CHAT_MSG_SKILL
+        dbg:print(msg)
         displayMsg(SKILL, msg)
 
     elseif event == "CHAT_MSG_MONEY" then
-        dbg:print(msg) -- Debug print for CHAT_MSG_MONEY
+        dbg:print(msg)
         displayMsg(MONEY, msg)
 
     elseif event == "CHAT_MSG_COMBAT_XP_GAIN" then
-        dbg:print(msg) -- Debug print for CHAT_MSG_COMBAT_XP_GAIN
+        dbg:print(msg) 
         displayMsg(COMBAT_XP, msg)
     end
 
