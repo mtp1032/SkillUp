@@ -142,6 +142,7 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("CHAT_MSG_SKILL")
 eventFrame:RegisterEvent("CHAT_MSG_LOOT")
 eventFrame:RegisterEvent("CHAT_MSG_MONEY")
+eventFrame:RegisterEvent("CHAT_MSG_COMBAT_XP_GAIN")
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     local msg = ...
