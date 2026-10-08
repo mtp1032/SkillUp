@@ -10,14 +10,16 @@ if not ns.Locales.loaded then
 else
     print("[SkillUp] Locales.lua loaded")
 end
-local debuggingIsEnabled = true
 local L = ns.Locales.L
 ns.Debug = ns.Debug or {} 
 local dbg = ns.Debug
+
+local dbgIsEnabled = true
+
 -----------------------------------------------------------------
 -- Private (local) functions
 -----------------------------------------------------------------
-local function getprefix(stackTrace)
+local function getPrefix(stackTrace)
     stackTrace = stackTrace or debugstack(3)
 
     local sourceFile, lineNumber =
@@ -51,56 +53,30 @@ end
 -----------------------------------------------------------------
 -- Public functions
 -----------------------------------------------------------------
-function dbg:prefix()
-    stackTrace = stackTrace or debugstack(3) 
-
-    local sourceFile, lineNumber =
-        stackTrace:match("[\\/]([^\\/:]+):(%d+)")
-
-    if not sourceFile or not lineNumber then
-        return "[Unknown:0] "
-    end
-    local prefix = string.format("[%s:%s] ", sourceFile, lineNumber)
-    return prefix
-end
-
 function dbg:print(...)
-    if not dbg:isDebuggingEnabled() then
+    if not dbgIsEnabled then
         return
     end
-    local message = getprefix(debugstack(2)) .. formatMessage(...)
+    local message = getPrefix(debugstack(2)) .. formatMessage(...)
     -- print(message)
     return message
 end
 
 function dbg:isDebuggingEnabled()
-    return ns.Locales.debuggingIsEnabled
+    return dbgIsEnabled
 end
 
 function dbg:enableDebugging()
-    ns.Locales.debuggingIsEnabled = true
+    dbgIsEnabled = true
+    return dbgIsEnabled
 end
 
 function dbg:disableDebugging()
-    ns.Locales.debuggingIsEnabled = false
+    dbgIsEnabled = false
+    return dbgIsEnabled
 end
 
 ns.Debug.loaded = true
 if dbg:isDebuggingEnabled() then
-    print("[SkillUp] Debug.lua loaded")
-end 
-
------------------------------ TESTS -----------------------------
--- local function foo()
---     dbg:print("Called by foo()")
--- end
--- local function bar()
---     dbg:print("Called by bar()")
--- end
--- local function fooBar()
---     print("In fooBar()")
---     foo()
---     bar()
--- end
-
--- fooBar()
+    print("[SkillUp] Debug.lua loaded.")
+end
