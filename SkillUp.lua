@@ -165,9 +165,9 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
         dbg:print(msg)
         displayMsg(MONEY, msg)
 
-    elseif event == "CHAT_MSG_COMBAT_XP_GAIN" then
-        dbg:print(msg) 
-        displayMsg(COMBAT_XP, msg)
+    -- elseif event == "CHAT_MSG_COMBAT_XP_GAIN" then
+    --     dbg:print(msg) 
+    --     displayMsg(COMBAT_XP, msg)
     end
 
 end)
