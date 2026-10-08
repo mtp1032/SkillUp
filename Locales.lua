@@ -5,7 +5,6 @@
 --------------------------------------------------------------------------------------
 local ADDON_NAME, ns = ...
 ns.Locales = ns.Locales or {}
-ns.Locales.debuggingIsEnabled = true
 
 local EXPANSION_NAMES = {}
 local function addExpansionName(expansionLevel, name)
@@ -32,7 +31,7 @@ addExpansionName(LE_EXPANSION_MIDNIGHT, "Midnight")
 -----------------------------------------------------------------
 
 local function getExpansionName()
-    local expansionName = "World of Warcraft: Forever (Beta)"
+    local expansionName = "Wow: Forever - Beta"
     local expansionLevel = GetExpansionLevel()
     if expansionLevel == 0 then
         return expansionName
@@ -67,6 +66,7 @@ if LOCALE == "enUS" then
         L["VERSION"],
         L["EXPANSION_NAME"]
     )
+    L["TEST_MSG"] = "This is a test message."
 end
 if LOCALE == "frFR" then
 end
