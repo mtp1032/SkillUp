@@ -9,6 +9,7 @@ if not ns.Debug.loaded then
     error("[SkillUp] Debug.lua not loaded")
     return
 end
+
 ns.SkillUp = ns.SkillUp or {}
 local skillUp   = ns.SkillUp
 local dbg       = ns.Debug
