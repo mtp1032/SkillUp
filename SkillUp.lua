@@ -168,6 +168,7 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
 
 end)
 
+ns.SkillUp.loaded = true
 if dbg:isDebuggingEnabled() then
-    print("[SkillUp] SkillUpMain.lua loaded.")
+    print("[SkillUp] SkillUp.lua loaded.")
 end
