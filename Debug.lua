@@ -10,11 +10,12 @@ if not ns.Locales.loaded then
 else
     print("[SkillUp] Locales.lua loaded")
 end
+
 local L = ns.Locales.L
 ns.Debug = ns.Debug or {} 
 local dbg = ns.Debug
 
-local dbgIsEnabled = true
+local debuggingIsEnabled = true
 
 -----------------------------------------------------------------
 -- Private (local) functions
@@ -54,26 +55,23 @@ end
 -- Public functions
 -----------------------------------------------------------------
 function dbg:print(...)
-    if not dbgIsEnabled then
-        return
-    end
-    local message = getPrefix(debugstack(2)) .. formatMessage(...)
-    -- print(message)
+    local prefix = getPrefix(debugstack(2))
+    local message = prefix .. formatMessage(...)
+    print( message )
     return message
 end
-
 function dbg:isDebuggingEnabled()
-    return dbgIsEnabled
+    return debuggingIsEnabled
 end
 
 function dbg:enableDebugging()
-    dbgIsEnabled = true
-    return dbgIsEnabled
+    debuggingIsEnabled = true
+    return debuggingIsEnabled
 end
 
 function dbg:disableDebugging()
-    dbgIsEnabled = false
-    return dbgIsEnabled
+    debuggingIsEnabled = false
+    return debuggingIsEnabled
 end
 
 ns.Debug.loaded = true
