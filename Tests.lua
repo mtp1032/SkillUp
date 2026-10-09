@@ -61,9 +61,6 @@ function tests:runAllTests()
     unitTestDebugServices()
 end
 
----------------------- RUN THE TESTS ----------------------
-tests:runAllTests()
-
 ns.Tests.loaded = true
 if dbg:isDebuggingEnabled() then
     dbg:print("[SkillUp] Tests.lua loaded.")
