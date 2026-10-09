@@ -4,18 +4,22 @@
 -- REWRITE: October 2026
 --------------------------------------------------------------------------------------
 local ADDON_NAME, ns = ...
+
+local debuggingIsEnabled = false
+
 if not ns.Locales.loaded then 
     error("[SkillUp] Locales.lua not loaded")
     return
 else
+    if debuggingIsEnabled then
     print("[SkillUp] Locales.lua loaded")
+    end
 end
 
 local L = ns.Locales.L
 ns.Debug = ns.Debug or {} 
 local dbg = ns.Debug
 
-local debuggingIsEnabled = true
 
 -----------------------------------------------------------------
 -- Private (local) functions
