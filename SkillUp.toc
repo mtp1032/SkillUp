@@ -17,7 +17,8 @@
 Locales.lua 
 Debug.lua
 SkillUp.lua
-Testing/Testing.lua
 ##---------------------------------------------
 ##              Testing Code
 ##---------------------------------------------
+Tests.lua
+CommandLine.lua
