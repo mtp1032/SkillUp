@@ -20,7 +20,7 @@ local L         = ns.Locales.L
 local SKILL = 1
 local LOOT  = 2
 local MONEY = 3
-local COMBAT_XP = 4
+local CURRENCY = 4
 
 ------------------------------------------------------------
 -- Starting Positions (per message type)
@@ -143,7 +143,7 @@ eventFrame:RegisterEvent("ADDON_LOADED")
 eventFrame:RegisterEvent("CHAT_MSG_SKILL")
 eventFrame:RegisterEvent("CHAT_MSG_LOOT")
 eventFrame:RegisterEvent("CHAT_MSG_MONEY")
-eventFrame:RegisterEvent("CHAT_MSG_COMBAT_XP_GAIN")
+eventFrame:RegisterEvent("CHAT_MSG_CURRENCY")
 
 eventFrame:SetScript("OnEvent", function(self, event, ...)
     local msg = ...
@@ -163,8 +163,8 @@ eventFrame:SetScript("OnEvent", function(self, event, ...)
     elseif event == "CHAT_MSG_MONEY" then
         displayMsg(MONEY, msg)
 
-    -- elseif event == "CHAT_MSG_COMBAT_XP_GAIN" then
-    --     displayMsg(COMBAT_XP, msg)
+    elseif event == "CHAT_MSG_CURRENCY" then
+        displayMsg(CURRENCY, msg)
     end
 
 end)
