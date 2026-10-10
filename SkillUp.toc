@@ -6,8 +6,8 @@
 ## X-MINOR: 0
 ## X-PATCH: 1
 ## X-Expansions: TBC Anniversary, Midnight, WoWForever (Beta_
-## IconTexture: 135874
-## 16 August, 2024
+## IconTexture: 136243
+## 16 August, 2026
 ## X-github: https://github.com/mtp1032/SkillUp
 
 ##---------------------------------------------
