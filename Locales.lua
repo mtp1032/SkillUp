@@ -7,6 +7,7 @@ local ADDON_NAME, ns = ...
 ns.Locales = ns.Locales or {}
 
 local EXPANSION_NAMES = {}
+local name = "Wow: Forever - Beta"
 local function addExpansionName(expansionLevel, name)
     if expansionLevel ~= nil then
         EXPANSION_NAMES[expansionLevel] = name
