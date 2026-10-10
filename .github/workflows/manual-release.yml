@@ -16,16 +16,47 @@ jobs:
         with:
           fetch-depth: 0  # we need full history to push a tag
 
-      - name: Extract version from SkillUp.toc
-        id: version
+      - name: Extract version from Locales.lua
+        id: addonVersion
         shell: bash
         run: |
-          # Find a line like "## Version: 0.0.1" and extract "0.0.1"
-          VER=$(grep -E '^##[[:space:]]*Version:' SkillUp.toc | sed -E 's/^##[[:space:]]*Version:[[:space:]]*//; s/[[:space:]]*$//')
-          if [[ -z "$VER" ]]; then
-            echo "Version not found in SkillUp.toc (## Version: x.y.z)."
-            exit 1
-          fi
+          set -euo pipefail
+
+          metadata_key_for() {
+            local variable="$1"
+            local key
+            key=$(sed -nE "s/^local ${variable}[[:space:]]*=[[:space:]]*C_AddOns.GetAddOnMetadata\\(ADDON_NAME,[[:space:]]*\"([^\"]+)\"\\).*/\\1/p" Locales.lua)
+            if [[ -z "$key" ]]; then
+              echo "Metadata key for '$variable' not found in Locales.lua." >&2
+              exit 1
+            fi
+            printf '%s' "$key"
+          }
+
+          metadata_value_for() {
+            local key="$1"
+            local value
+            value=$(awk -F: -v key="$key" '
+              $1 ~ "^##[[:space:]]*" key "$" {
+                sub(/^[^:]*:[[:space:]]*/, "")
+                sub(/\r$/, "")
+                gsub(/[[:space:]]+$/, "")
+                print
+                exit
+              }
+            ' SkillUp.toc)
+            if [[ -z "$value" ]]; then
+              echo "Metadata value for '$key' not found in SkillUp.toc." >&2
+              exit 1
+            fi
+            printf '%s' "$value"
+          }
+
+          MAJOR=$(metadata_value_for "$(metadata_key_for majorVersion)")
+          MINOR=$(metadata_value_for "$(metadata_key_for minorVersion)")
+          PATCH=$(metadata_value_for "$(metadata_key_for patchVersion)")
+          VER="${MAJOR}.${MINOR}.${PATCH}"
+
           echo "ver=$VER" >> "$GITHUB_OUTPUT"
           echo "tag=v$VER" >> "$GITHUB_OUTPUT"
           echo "zip=skillup-v${VER}-master.zip" >> "$GITHUB_OUTPUT"
@@ -69,10 +100,10 @@ jobs:
         shell: bash
         run: |
           cd dist
-          zip -r "${{ steps.version.outputs.zip }}" SkillUp
-          mv "${{ steps.version.outputs.zip }}" ..
+          zip -r "${{ steps.addonVersion.outputs.zip }}" SkillUp
+          mv "${{ steps.addonVersion.outputs.zip }}" ..
           cd ..
-          echo "Created ${{ steps.version.outputs.zip }}"
+          echo "Created ${{ steps.addonVersion.outputs.zip }}"
 
       - name: Create tag
         shell: bash
@@ -80,18 +111,18 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           # If the tag already exists, exit explicitly to avoid a failing push
-          if git rev-parse "${{ steps.version.outputs.tag }}" >/dev/null 2>&1; then
-            echo "Tag ${{ steps.version.outputs.tag }} already exists. Aborting."
+          if git rev-parse "${{ steps.addonVersion.outputs.tag }}" >/dev/null 2>&1; then
+            echo "Tag ${{ steps.addonVersion.outputs.tag }} already exists. Aborting."
             exit 1
           fi
-          git tag -a "${{ steps.version.outputs.tag }}" -m "Release ${{ steps.version.outputs.tag }}"
-          git push origin "${{ steps.version.outputs.tag }}"
+          git tag -a "${{ steps.addonVersion.outputs.tag }}" -m "Release ${{ steps.addonVersion.outputs.tag }}"
+          git push origin "${{ steps.addonVersion.outputs.tag }}"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name:  ${{ steps.version.outputs.tag }}
-          name:      SkillUp ${{ steps.version.outputs.tag }}
+          tag_name:  ${{ steps.addonVersion.outputs.tag }}
+          name:      SkillUp ${{ steps.addonVersion.outputs.tag }}
           draft:     false
           prerelease: false
-          files:     ${{ steps.version.outputs.zip }}
+          files:     ${{ steps.addonVersion.outputs.zip }}
