@@ -1,9 +1,17 @@
-### SkillUp
-#### Description
-SkillUp is a simple AddOn that scrolls messages delivered by the CHAT_MSG_SKILL, CHAT_MSG_LOOT, CHAT_MSG_MONEY events.
-#####
-To run the internal debug code at the command line write:
-/skill
-to get the command line commands and options
-#####
-Tested and validated on TBC Anniversary, WoW Forever, and Retail (Midnight)
+# SkillUp
+
+SkillUp displays floating messages for skill gains, loot, money, and currency.
+
+## Supported clients
+
+Tested on TBC Anniversary, WoW Forever, and Retail (Midnight).
+
+## In-game commands
+
+- `/skill debug enable` — enable debug message output.
+- `/skill debug disable` — disable debug message output.
+- `/skill run unittest` — run the addon's unit tests.
+
+## Installation
+
+Install the `SkillUp` folder in your World of Warcraft `Interface/AddOns` directory, then enable SkillUp from the AddOns list.
